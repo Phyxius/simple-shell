@@ -12,6 +12,6 @@ int main()
 
     }
     free(line);
-    perror("exit: ");
+    if (!feof(stdin)) perror("getline: ");
     return 0;
 }
