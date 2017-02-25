@@ -1,14 +1,7 @@
 #include <stdio.h>
-#include <stdbool.h>
 #include <stdlib.h>
-#include "aux_files/list.h"
-#include "aux_files/chop_line.h"
-#include "simsh.h"
+#include "libsimsh.h"
 
-void print_prompt()
-{
-    printf("simsh: ");
-}
 
 int main()
 {
@@ -18,7 +11,9 @@ int main()
     print_prompt();
     while((read = getline(&line, &lineLength, stdin)) != -1)
     {
-
+        if (line[read - 1] == '\n') line[read -1] = '\0';
+        chopped_line_t * chopped_line = get_chopped_line(line);
+        free_chopped_line(chopped_line);
         print_prompt();
     }
     free(line);
