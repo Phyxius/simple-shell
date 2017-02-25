@@ -8,6 +8,9 @@
 #include "aux_files/chop_line.h"
 #include "aux_files/list.h"
 
+typedef enum validation_t { VALID = 0, BAD_AMPERSAND} validation_t;
+
 void print_prompt();
-bool is_valid_line(const chopped_line_t * line);
+validation_t validate_line(const chopped_line_t *line);
+const char* get_validation_result(validation_t result);
 #endif //LAB_2_LIBSIMSH_H

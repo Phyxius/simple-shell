@@ -13,6 +13,15 @@ int main()
     {
         if (line[read - 1] == '\n') line[read -1] = '\0';
         chopped_line_t * chopped_line = get_chopped_line(line);
+        validation_t validation_result = validate_line(chopped_line);
+        if (validation_result != VALID)
+        {
+            printf("Error: %s\n", get_validation_result(validation_result));
+        }
+        else
+        {
+            printf("Valid line!\n");
+        }
         free_chopped_line(chopped_line);
         print_prompt();
     }
