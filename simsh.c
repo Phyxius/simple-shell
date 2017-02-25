@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include "libsimsh.h"
 
 
@@ -20,7 +21,7 @@ int main()
         }
         else
         {
-            printf("Valid line!\n");
+
         }
         free_chopped_line(chopped_line);
         print_prompt();

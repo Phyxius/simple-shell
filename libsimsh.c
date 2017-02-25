@@ -3,6 +3,7 @@
 //
 
 #include <stdio.h>
+#include <string.h>
 #include "libsimsh.h"
 #include "aux_files/chop_line.h"
 
@@ -15,7 +16,7 @@ validation_t validate_line(const chopped_line_t *line)
 {
     for (int i = 0; i < line->num_tokens - 1; ++i)
     {
-        if (line->tokens[i][0] == '&') return BAD_AMPERSAND;
+        if (strcmp(line->tokens[i], "&") == 0) return BAD_AMPERSAND;
     }
     return VALID;
 }
