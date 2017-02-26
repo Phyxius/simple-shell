@@ -52,6 +52,10 @@ int main()
         perror("getline: ");
         exit(EXIT_FAILURE);
     }
-    wait(NULL);
+    while (wait(NULL)) { //wait for all children to exit
+        if (errno == ECHILD) {
+            break;
+        }
+    }
     return EXIT_SUCCESS;
 }
