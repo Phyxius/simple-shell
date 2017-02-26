@@ -27,6 +27,7 @@ int main()
         else if (strcmp(chopped_line->tokens[0], "exit") == 0)
         {
             free_chopped_line(chopped_line);
+            errno = 0;
             break;
         }
         validation_t validation_result = validate_line(chopped_line);
