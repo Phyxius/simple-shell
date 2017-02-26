@@ -48,7 +48,7 @@ int main()
         print_prompt();
     }
     free(line);
-    if (!feof(stdin))
+    if (!feof(stdin) && errno != 0)
     {
         perror("getline: ");
         exit(EXIT_FAILURE);
