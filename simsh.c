@@ -1,11 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <signal.h>
+#include <errno.h>
+#include <wait.h>
 #include "libsimsh.h"
 
 
 int main()
 {
+    setup_sigchld_handler();
     char* line = NULL;
     size_t lineLength = 0;
     ssize_t read;
@@ -21,7 +25,10 @@ int main()
         }
         else
         {
-
+            if (!launch_process(chopped_line))
+            {
+                printf("Error!\n");
+            }
         }
         free_chopped_line(chopped_line);
         print_prompt();
