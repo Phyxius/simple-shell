@@ -51,15 +51,15 @@ bool launch_process(const chopped_line_t *line)
         args[line->num_tokens] = NULL;
         execvp(args[0], args);
         //todo: transmit errno with fprintf
-        write(pipe_fds[1], "", 1); //if execvp succeeds, will never reach here
+        write(pipe_fds[1], (char *) &errno, sizeof(errno)); //if execvp succeeds, will never reach here
         _exit(EXIT_FAILURE);
     }
     else //parent
     {
         _ssize_t n;
-        char out;
+        typeof(errno) piperr;
         close(pipe_fds[1]);
-        n = read(pipe_fds[0], &out, 1);
+        n = read(pipe_fds[0], &piperr, sizeof(errno));
         if (n == 0)
         {
             waitpid(pid, NULL, 0);
@@ -67,6 +67,7 @@ bool launch_process(const chopped_line_t *line)
         }
         else
         {
+            errno = piperr;
             return false;
         }
     }

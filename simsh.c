@@ -27,7 +27,7 @@ int main()
         {
             if (!launch_process(chopped_line))
             {
-                printf("Error!\n");
+                perror("Error");
             }
         }
         free_chopped_line(chopped_line);
