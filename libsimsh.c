@@ -11,6 +11,8 @@
 #include <wait.h>
 #include <errno.h>
 
+#define typeof __typeof__
+
 void print_prompt()
 {
     printf("simsh: ");
@@ -94,4 +96,4 @@ void setup_sigchld_handler()
     }
 }
 
-
+#undef typeof

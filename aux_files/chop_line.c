@@ -28,15 +28,13 @@ chopped_line_t * get_chopped_line( const char * iline )
         cl->tokens = ( char ** ) realloc( cl->tokens,
                                           cl->num_tokens * sizeof( char * ) );
         cl->tokens[ cl->num_tokens - 1 ] = cur_token;
-    } while( cur_token = strtok( NULL, delim ) );
+    } while((cur_token = strtok(NULL, delim)));
 
     return cl;
 } 
 
 void free_chopped_line( chopped_line_t * icl )
 {
-    unsigned int i;
-
     if( icl == NULL )
         return;
 
