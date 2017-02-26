@@ -1,12 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <signal.h>
 #include <errno.h>
 #include <wait.h>
 #include <string.h>
 #include "libsimsh.h"
-#include "aux_files/chop_line.h"
 
 
 int main()

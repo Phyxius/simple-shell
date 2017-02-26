@@ -10,7 +10,6 @@
 #include <stdlib.h>
 #include <wait.h>
 #include <errno.h>
-#include "aux_files/chop_line.h"
 
 void print_prompt()
 {
