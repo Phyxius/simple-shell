@@ -53,5 +53,6 @@ int main()
         perror("getline: ");
         exit(EXIT_FAILURE);
     }
+    wait(NULL);
     return EXIT_SUCCESS;
 }
