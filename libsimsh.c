@@ -51,7 +51,6 @@ bool launch_process(const chopped_line_t *line, bool wait)
         args[line->num_tokens] = NULL;
         if (!wait) args[line->num_tokens - 1] = NULL;
         execvp(args[0], args);
-        //todo: transmit errno with fprintf
         write(pipe_fds[1], (char *) &errno, sizeof(errno)); //if execvp succeeds, will never reach here
         free(args);
         _exit(EXIT_FAILURE);
