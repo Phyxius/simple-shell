@@ -19,6 +19,7 @@ chopped_line_t * get_chopped_line( const char * iline )
         return cl;
 
     line_copy = strdup( iline );
+    cl->line_copy = line_copy;
     cur_token = strtok( line_copy, delim );
     if( cur_token == NULL )
         return cl;
@@ -29,7 +30,6 @@ chopped_line_t * get_chopped_line( const char * iline )
                                           cl->num_tokens * sizeof( char * ) );
         cl->tokens[ cl->num_tokens - 1 ] = cur_token;
     } while((cur_token = strtok(NULL, delim)));
-
     return cl;
 } 
 
@@ -39,5 +39,6 @@ void free_chopped_line( chopped_line_t * icl )
         return;
 
     free( icl->tokens );
+    free( icl->line_copy );
     free(icl);
 }
