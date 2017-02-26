@@ -4,6 +4,7 @@
 #include <errno.h>
 #include <wait.h>
 #include <string.h>
+#include <zconf.h>
 #include "libsimsh.h"
 
 
@@ -38,7 +39,7 @@ int main()
         else
         {
             bool foreground = strcmp(chopped_line->tokens[chopped_line->num_tokens - 1], "&") != 0;
-            if (!launch_process(chopped_line, foreground))
+            if (!launch_process(chopped_line, foreground, STDIN_FILENO, STDOUT_FILENO))
             {
                 perror("Error");
             }

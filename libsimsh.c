@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "libsimsh.h"
+#include "aux_files/chop_line.h"
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdlib.h>
@@ -18,12 +19,43 @@ void print_prompt()
     printf("simsh: ");
 }
 
+bool streq(const char * str1, const char * str2)
+{
+    return strcmp(str1, str2) == 0;
+}
+
 validation_t validate_line(const chopped_line_t *line)
 {
-    for (int i = 0; i < line->num_tokens - 1; ++i)
+    bool has_out_redirect = false, has_in_redirect = false;
+    for (int i = 0; i < line->num_tokens; ++i)
     {
-        if (strcmp(line->tokens[i], "&") == 0) return BAD_AMPERSAND;
+        if (i < line->num_tokens - 1 && streq(line->tokens[i], "&")) return BAD_AMPERSAND;
+        if (streq(line->tokens[i], ">") || streq(line->tokens[i], ">>"))
+        {
+            if (has_out_redirect) return AMBIGUOUS_OUTPUT_REDIRECT;
+            has_out_redirect = true;
+            if (i >= line->num_tokens - 1) return MISSING_REDIRECT_NAME;
+            if (streq(line->tokens[i + 1], ">") ||
+                streq(line->tokens[i + 1], "<") ||
+                streq(line->tokens[i + 1], ">>"))
+                return MISSING_REDIRECT_NAME;
+        }
+        if (streq(line->tokens[i], "<"))
+        {
+            if (has_in_redirect) return AMBIGUOUS_INPUT_REDIRECT;
+            has_in_redirect = true;
+            if (i >= line->num_tokens - 1) return MISSING_REDIRECT_NAME;
+            if (streq(line->tokens[i + 1], ">") ||
+                streq(line->tokens[i + 1], "<") ||
+                streq(line->tokens[i + 1], ">>"))
+                return MISSING_REDIRECT_NAME;
+        }
     }
+    int min_tokens = 0;
+    if (has_in_redirect) min_tokens += 2;
+    if (has_out_redirect) min_tokens += 2;
+    if (streq(line->tokens[line->num_tokens - 1], "&")) min_tokens++;
+    if (line->num_tokens <= min_tokens) return NULL_COMMAND;
     return VALID;
 }
 
@@ -33,6 +65,10 @@ const char* get_validation_result(validation_t result)
     {
         case VALID: return "Valid";
         case BAD_AMPERSAND: return "Out-of-place ampersand";
+        case AMBIGUOUS_INPUT_REDIRECT: return "Ambiguous input redirect.";
+        case AMBIGUOUS_OUTPUT_REDIRECT: return "Ambiguous output redirect.";
+        case MISSING_REDIRECT_NAME: return "Missing name for redirect.";
+        case NULL_COMMAND: return "Invalid null command.";
         default: return NULL;
     }
 }
