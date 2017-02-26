@@ -36,7 +36,7 @@ const char* get_validation_result(validation_t result)
     }
 }
 
-bool launch_process(const chopped_line_t *line)
+bool launch_process(const chopped_line_t *line, bool wait)
 {
     //code modified from: https://stackoverflow.com/questions/15497224/return-status-of-execve
     int pipe_fds[2];
@@ -49,9 +49,11 @@ bool launch_process(const chopped_line_t *line)
         char ** args = malloc((line->num_tokens + 1) * sizeof(char *));
         memcpy(args, line->tokens, line->num_tokens * sizeof(char *));
         args[line->num_tokens] = NULL;
+        if (!wait) args[line->num_tokens - 1] = NULL;
         execvp(args[0], args);
         //todo: transmit errno with fprintf
         write(pipe_fds[1], (char *) &errno, sizeof(errno)); //if execvp succeeds, will never reach here
+        free(args);
         _exit(EXIT_FAILURE);
     }
     else //parent
@@ -62,7 +64,7 @@ bool launch_process(const chopped_line_t *line)
         n = read(pipe_fds[0], &piperr, sizeof(errno));
         if (n == 0)
         {
-            waitpid(pid, NULL, 0);
+            if (wait) waitpid(pid, NULL, 0);
             return true;
         }
         else

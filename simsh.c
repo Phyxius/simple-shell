@@ -4,7 +4,9 @@
 #include <signal.h>
 #include <errno.h>
 #include <wait.h>
+#include <string.h>
 #include "libsimsh.h"
+#include "aux_files/chop_line.h"
 
 
 int main()
@@ -25,7 +27,8 @@ int main()
         }
         else
         {
-            if (!launch_process(chopped_line))
+            bool foreground = strcmp(chopped_line->tokens[chopped_line->num_tokens - 1], "&") != 0;
+            if (!launch_process(chopped_line, foreground))
             {
                 perror("Error");
             }
