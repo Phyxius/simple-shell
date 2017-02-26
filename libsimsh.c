@@ -37,7 +37,7 @@ const char* get_validation_result(validation_t result)
     }
 }
 
-bool launch_process(const chopped_line_t *line, bool wait)
+bool launch_process(char * const *args, bool wait, int in_fd, int out_fd)
 {
     //code modified from: https://stackoverflow.com/questions/15497224/return-status-of-execve
     int pipe_fds[2];
@@ -47,29 +47,23 @@ bool launch_process(const chopped_line_t *line, bool wait)
     {
         close(pipe_fds[0]); //close read end of pipe
         fcntl(pipe_fds[1], F_SETFD, FD_CLOEXEC); //pipe will automatically close on successful exec call
-        char ** args = malloc((line->num_tokens + 1) * sizeof(char *));
-        memcpy(args, line->tokens, line->num_tokens * sizeof(char *));
-        args[line->num_tokens] = NULL;
-        if (!wait) args[line->num_tokens - 1] = NULL;
+
         execvp(args[0], args);
         write(pipe_fds[1], (char *) &errno, sizeof(errno)); //if execvp succeeds, will never reach here
-        free(args);
         _exit(EXIT_FAILURE);
     }
     else //parent
     {
-        ssize_t n;
-        typeof(errno) piperr;
+        typeof(errno) pipe_err;
         close(pipe_fds[1]);
-        n = read(pipe_fds[0], &piperr, sizeof(errno));
-        if (n == 0)
+        if (read(pipe_fds[0], &pipe_err, sizeof(errno)) == 0)
         {
             if (wait) waitpid(pid, NULL, 0);
             return true;
         }
         else
         {
-            errno = piperr;
+            errno = pipe_err;
             return false;
         }
     }
