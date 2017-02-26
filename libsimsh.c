@@ -58,7 +58,7 @@ bool launch_process(const chopped_line_t *line, bool wait)
     }
     else //parent
     {
-        _ssize_t n;
+        ssize_t n;
         typeof(errno) piperr;
         close(pipe_fds[1]);
         n = read(pipe_fds[0], &piperr, sizeof(errno));
