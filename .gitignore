@@ -110,3 +110,4 @@ compile_commands.json
 CTestTestfile.cmake
 
 # End of https://www.gitignore.io/api/c,clion,cmake
+!/turnin/Makefile
