@@ -4,6 +4,7 @@
 typedef struct {
     char ** tokens;           //pointer to "num_tokens" null-terminated strings
     unsigned int num_tokens;  //size of "tokens" string pointer array
+    char * line_copy;
 } chopped_line_t ;
 
 /* get_chopped_line(): chops a line into individual tokens separated by whitespace 
