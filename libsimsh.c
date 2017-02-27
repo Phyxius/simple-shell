@@ -25,12 +25,22 @@ bool streq(const char * str1, const char * str2)
 
 validation_t validate_line(const chopped_line_t *line)
 {
-    bool has_out_redirect = false, has_in_redirect = false;
+    bool has_out_redirect = false, has_in_redirect = false,
+            in_pipeline = false, current_pipeline_pos_has_command = false;
+    int min_tokens = 1;
     for (int i = 0; i < line->num_tokens; ++i)
     {
         char *const cur_token = line->tokens[i];
         if (i < line->num_tokens - 1 && streq(cur_token, "&")) return BAD_AMPERSAND;
-        if (streq(cur_token, ">") || streq(cur_token, ">>"))
+        if (streq(cur_token, "|"))
+        {
+            if (has_out_redirect) return AMBIGUOUS_OUTPUT_REDIRECT;
+            if (!current_pipeline_pos_has_command) return NULL_COMMAND;
+            current_pipeline_pos_has_command = false;
+            in_pipeline = true;
+            min_tokens += 2;
+        }
+        else if (streq(cur_token, ">") || streq(cur_token, ">>"))
         {
             if (has_out_redirect) return AMBIGUOUS_OUTPUT_REDIRECT;
             has_out_redirect = true;
@@ -41,9 +51,9 @@ validation_t validate_line(const chopped_line_t *line)
                 streq(next_token, ">>"))
                 return MISSING_REDIRECT_NAME;
         }
-        if (streq(cur_token, "<"))
+        else if (streq(cur_token, "<"))
         {
-            if (has_in_redirect) return AMBIGUOUS_INPUT_REDIRECT;
+            if (has_in_redirect || in_pipeline) return AMBIGUOUS_INPUT_REDIRECT;
             has_in_redirect = true;
             if (i >= line->num_tokens - 1) return MISSING_REDIRECT_NAME;
             char *const next_token = line->tokens[i + 1];
@@ -52,12 +62,13 @@ validation_t validate_line(const chopped_line_t *line)
                 streq(next_token, ">>"))
                 return MISSING_REDIRECT_NAME;
         }
+        else current_pipeline_pos_has_command = true;
     }
-    int min_tokens = 0;
+    if (!current_pipeline_pos_has_command) return NULL_COMMAND;
     if (has_in_redirect) min_tokens += 2;
     if (has_out_redirect) min_tokens += 2;
     if (streq(line->tokens[line->num_tokens - 1], "&")) min_tokens++;
-    if (line->num_tokens <= min_tokens) return NULL_COMMAND;
+    if (line->num_tokens < min_tokens) return NULL_COMMAND;
     return VALID;
 }
 

@@ -62,7 +62,7 @@ int main()
                     perror(command.output_file);
                 }
             }
-            if (!error && launch_process(command.args, command.foreground, in_fd, out_fd) > 0)
+            if (!error && launch_process(command.args, command.foreground, in_fd, out_fd) < 0)
             {
                 perror("Error");
             }
