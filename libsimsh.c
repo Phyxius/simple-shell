@@ -99,7 +99,7 @@ command_t parse_chopped_line(chopped_line_t *line)
         if (streq(cur_token, ">") || streq(cur_token, ">>"))
         {
             argc -= 2;
-            command.output_file = line->tokens[i + 1];
+            command.output_file = strdup(line->tokens[i + 1]);
             command.create_output = streq(line->tokens[i], ">");
             i++;
             continue;
@@ -107,7 +107,7 @@ command_t parse_chopped_line(chopped_line_t *line)
         if (streq(cur_token, "<"))
         {
             argc -= 2;
-            command.input_file = line->tokens[i + 1];
+            command.input_file = strdup(line->tokens[i + 1]);
             i++;
             continue;
         }
