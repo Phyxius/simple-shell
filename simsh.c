@@ -5,8 +5,11 @@
 #include <wait.h>
 #include <string.h>
 #include <zconf.h>
+#include <sys/fcntl.h>
 #include "libsimsh.h"
 
+//static const char * NONEXISTANT_FILE_MESSAGE = ": No such file or directory.";
+//static const char * EXISTANT_FILE_MESSAGE = ": File exists.";
 
 int main()
 {
@@ -38,11 +41,38 @@ int main()
         }
         else
         {
-            bool foreground = strcmp(chopped_line->tokens[chopped_line->num_tokens - 1], "&") != 0;
-            if (!launch_process(chopped_line, foreground, STDIN_FILENO, STDOUT_FILENO))
+            command_t command = parse_chopped_line(chopped_line);
+            bool error = false;
+            int in_fd = STDIN_FILENO;
+            int out_fd = STDOUT_FILENO;
+            if (command.input_file)
+            {
+                in_fd = open(command.input_file, O_RDONLY);
+                if (in_fd < 0)
+                {
+                    error = true;
+                    perror(command.input_file);
+                }
+            }
+            if (!error && command.output_file)
+            {
+                int flags = O_WRONLY;
+                if (command.create_output) flags |= O_CREAT | O_EXCL;
+                else flags |= O_APPEND;
+                out_fd = open(command.output_file, flags);
+                if (out_fd < 0)
+                {
+                    error = true;
+                    perror(command.output_file);
+                }
+            }
+            if (!error && !launch_process(command.args, command.foreground, in_fd, out_fd))
             {
                 perror("Error");
             }
+            if (in_fd != STDIN_FILENO) close(in_fd);
+            if (out_fd != STDOUT_FILENO) close(out_fd);
+            free_command_t(&command);
         }
         free_chopped_line(chopped_line);
         print_prompt();
