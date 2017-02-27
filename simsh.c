@@ -59,7 +59,7 @@ int main()
                 int flags = O_WRONLY;
                 if (command.create_output) flags |= O_CREAT | O_EXCL;
                 else flags |= O_APPEND;
-                out_fd = open(command.output_file, flags);
+                out_fd = open(command.output_file, flags, 0666);
                 if (out_fd < 0)
                 {
                     error = true;
