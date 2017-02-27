@@ -158,8 +158,16 @@ bool launch_process(char * const *args, bool wait, int in_fd, int out_fd)
         close(pipe_fds[0]); //close read end of pipe
         fcntl(pipe_fds[1], F_SETFD, FD_CLOEXEC); //pipe will automatically close on successful exec call
 
-        if (in_fd != STDIN_FILENO) dup2(in_fd, STDIN_FILENO);
-        if (out_fd != STDOUT_FILENO) dup2(out_fd, STDOUT_FILENO);
+        if (in_fd != STDIN_FILENO)
+        {
+            dup2(in_fd, STDIN_FILENO);
+            close(in_fd);
+        }
+        if (out_fd != STDOUT_FILENO)
+        {
+            dup2(out_fd, STDOUT_FILENO);
+            close(out_fd);
+        }
         execvp(args[0], args);
         write(pipe_fds[1], (char *) &errno, sizeof(errno)); //if execvp succeeds, will never reach here
         _exit(EXIT_FAILURE);

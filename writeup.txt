@@ -13,3 +13,6 @@ Question 2:
     3. $TERM - the type of terminal the program is running under; used to decide how to handle e.g. coloring of text.
     4. $USER - the currently logged in user.
     5. $LANG - the current user's language and text encoding.
+
+Question 3:
+    fork()'d processes get copies of all open file descriptors from the parent, so care must be taken to close both the parent's and child's file descriptors as appropriate.
