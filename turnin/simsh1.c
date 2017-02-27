@@ -33,7 +33,7 @@ int main()
         validation_t validation_result = validate_line(chopped_line);
         if (validation_result != VALID)
         {
-            printf("Error: %s\n", get_validation_result(validation_result));
+            fprintf(stderr, "Error: %s\n", get_validation_result(validation_result));
         }
         else
         {
