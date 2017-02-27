@@ -49,7 +49,7 @@ int main()
     free(line);
     if (!feof(stdin) && errno != 0)
     {
-        perror("getline: ");
+        perror("getline");
         exit(EXIT_FAILURE);
     }
     while (wait(NULL)) { //wait for all children to exit
