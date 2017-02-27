@@ -3,9 +3,8 @@
 #include <signal.h>
 #include <errno.h>
 #include <wait.h>
-#include <string.h>
-#include <zconf.h>
 #include <sys/fcntl.h>
+#include <unistd.h>
 #include "libsimsh.h"
 
 int main()

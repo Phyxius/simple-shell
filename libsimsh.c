@@ -5,7 +5,6 @@
 #include <stdio.h>
 #include <string.h>
 #include "libsimsh.h"
-#include "aux_files/chop_line.h"
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdlib.h>
