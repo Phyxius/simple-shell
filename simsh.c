@@ -70,8 +70,8 @@ int main()
             {
                 perror("Error");
             }
-            if (in_fd != STDIN_FILENO) close(in_fd);
-            if (out_fd != STDOUT_FILENO) close(out_fd);
+            if (in_fd != STDIN_FILENO && in_fd > -1) close(in_fd);
+            if (out_fd != STDOUT_FILENO && out_fd > -1) close(out_fd);
             free_command_t(&command);
         }
         free_chopped_line(chopped_line);
