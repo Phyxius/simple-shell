@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "libsimsh.h"
+#include "aux_files/chop_line.h"
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdlib.h>
@@ -114,14 +115,17 @@ command_t parse_chopped_line(chopped_line_t *line)
 
     command.args = malloc((argc + 1) * sizeof(char *));
     int args_index = 0;
-    for (int j = 0; j < argc; ++j)
+    for (int j = 0; j < line->num_tokens && args_index < argc; ++j)
     {
         const char *current_token = line->tokens[j];
-        if (streq(current_token, "&")) j++;
+        if (streq(current_token, "&")) continue;
         if (streq(current_token, ">") ||
             streq(current_token, ">>") ||
             streq(current_token, "<"))
-            j += 2;
+        {
+            j++;
+            continue;
+        }
         command.args[args_index] = strdup(line->tokens[j]);
         args_index++;
     }
