@@ -9,7 +9,7 @@
 #include "aux_files/list.h"
 
 typedef enum validation_t {
-    VALID = 0,
+    VALID = false,
     BAD_AMPERSAND,
     AMBIGUOUS_INPUT_REDIRECT,
     AMBIGUOUS_OUTPUT_REDIRECT,
