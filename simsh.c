@@ -25,7 +25,7 @@ int main()
             print_prompt();
             continue;
         }
-        else if (strcmp(chopped_line->tokens[0], "exit") == 0)
+        else if (streq(chopped_line->tokens[0], "exit"))
         {
             free_chopped_line(chopped_line);
             errno = 0;
