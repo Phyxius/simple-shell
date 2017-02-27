@@ -146,7 +146,7 @@ void free_command_t(command_t * command)
     }
 }
 
-bool launch_process(char * const *args, bool wait, int in_fd, int out_fd)
+pid_t launch_process(char * const *args, bool wait, int in_fd, int out_fd)
 {
     //code modified from: https://stackoverflow.com/questions/15497224/return-status-of-execve
     int pipe_fds[2];
@@ -173,21 +173,20 @@ bool launch_process(char * const *args, bool wait, int in_fd, int out_fd)
     }
     else //parent
     {
-        if (pid < 0) return false;
+        if (pid < 0) return -1;
         typeof(errno) pipe_err;
         close(pipe_fds[1]);
         if (read(pipe_fds[0], &pipe_err, sizeof(errno)) == 0)
         {
             if (wait) waitpid(pid, NULL, 0);
-            return true;
+            return pid;
         }
         else
         {
             errno = pipe_err;
-            return false;
+            return -1;
         }
     }
-    return false;
 }
 
 
