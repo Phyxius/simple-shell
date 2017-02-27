@@ -8,9 +8,6 @@
 #include <sys/fcntl.h>
 #include "libsimsh.h"
 
-//static const char * NONEXISTANT_FILE_MESSAGE = ": No such file or directory.";
-//static const char * EXISTANT_FILE_MESSAGE = ": File exists.";
-
 int main()
 {
     setup_sigchld_handler();
