@@ -159,6 +159,7 @@ bool launch_process(char * const *args, bool wait, int in_fd, int out_fd)
     }
     else //parent
     {
+        if (pid < 0) return false;
         typeof(errno) pipe_err;
         close(pipe_fds[1]);
         if (read(pipe_fds[0], &pipe_err, sizeof(errno)) == 0)
