@@ -116,9 +116,12 @@ command_t parse_chopped_line(chopped_line_t *line)
     int args_index = 0;
     for (int j = 0; j < argc; ++j)
     {
-        const char * current_token = line->tokens[j];
+        const char *current_token = line->tokens[j];
         if (streq(current_token, "&")) j++;
-        if (streq(current_token, ">") || streq(current_token, ">>")) j+=2;
+        if (streq(current_token, ">") ||
+            streq(current_token, ">>") ||
+            streq(current_token, "<"))
+            j += 2;
         command.args[args_index] = strdup(line->tokens[j]);
         args_index++;
     }
