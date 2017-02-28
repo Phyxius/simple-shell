@@ -39,39 +39,76 @@ int main()
         {
             //command_t command = parse_chopped_line(chopped_line);
             command_t * commands;
-            parse_pipeline(chopped_line, &commands);
-            command_t command = commands[0];
+            int command_count = parse_pipeline(chopped_line, &commands);
             bool error = false;
             int in_fd = STDIN_FILENO;
             int out_fd = STDOUT_FILENO;
-            if (command.input_file)
+            const command_t first_command = commands[0];
+            if (first_command.input_file)
             {
-                in_fd = open(command.input_file, O_RDONLY);
+                in_fd = open(first_command.input_file, O_RDONLY);
                 if (in_fd < 0)
                 {
                     error = true;
-                    perror(command.input_file);
+                    perror(first_command.input_file);
                 }
             }
-            if (!error && command.output_file)
+            const command_t final_command = commands[command_count - 1];
+            if (!error && final_command.output_file)
             {
                 int flags = O_WRONLY;
-                if (command.create_output) flags |= O_CREAT | O_EXCL;
+                if (final_command.create_output) flags |= O_CREAT | O_EXCL;
                 else flags |= O_APPEND;
-                out_fd = open(command.output_file, flags, 0666);
+                out_fd = open(final_command.output_file, flags, 0666);
                 if (out_fd < 0)
                 {
                     error = true;
-                    perror(command.output_file);
+                    perror(final_command.output_file);
                 }
             }
-            if (!error && launch_process(command.args, command.foreground, in_fd, out_fd) < 0)
+            pid_t command_pids[command_count];
+            int pipe_fds[command_count][2];
+            if(error)
             {
                 perror("Error");
             }
-            if (in_fd != STDIN_FILENO && in_fd > -1) close(in_fd);
-            if (out_fd != STDOUT_FILENO && out_fd > -1) close(out_fd);
-            free_command_t(&command);
+            else
+            {
+                int temp_fds[2];
+                pipe_fds[0][0] = in_fd;
+                pipe_fds[command_count-1][1] = out_fd;
+                for (int i = 0; i < command_count-1; ++i)
+                {
+                    if (pipe(temp_fds))
+                    {
+                        perror("pipe");
+                        return EXIT_FAILURE;
+                    }
+                    pipe_fds[i][1] = temp_fds[1];
+                    pipe_fds[i+1][0] = temp_fds[0];
+                }
+                for(int i = 0; i < command_count; ++i)
+                {
+                    command_pids[i] = launch_process(commands[i].args, false, pipe_fds[i][0], pipe_fds[i][1]);
+                    if (command_pids[i] < 0)
+                    {
+                        perror("Error");
+                        break;
+                    }
+                }
+            }
+            if (final_command.foreground)
+            {
+                for (int i = 0; i < command_count; ++i)
+                {
+                    waitpid(command_pids[i], NULL, 0);
+                }
+            }
+            for (int i = 0; i < command_count; ++i)
+            {
+                free_command_t(&commands[i]);
+            }
+            free(commands);
         }
         free_chopped_line(chopped_line);
         print_prompt();

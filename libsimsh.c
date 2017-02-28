@@ -214,6 +214,8 @@ pid_t launch_process(char * const *args, bool wait, int in_fd, int out_fd)
         if (pid < 0) return -1;
         typeof(errno) pipe_err;
         close(pipe_fds[1]);
+        if (in_fd != STDIN_FILENO) close(in_fd);
+        if (out_fd != STDOUT_FILENO) close(out_fd);
         if (read(pipe_fds[0], &pipe_err, sizeof(errno)) == 0)
         {
             if (wait) waitpid(pid, NULL, 0);
