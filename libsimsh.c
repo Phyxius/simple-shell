@@ -146,6 +146,7 @@ command_t parse_chopped_line(chopped_line_t *line)
 
 void free_command_t(command_t * command)
 {
+    if (!command) return;
     if (command->input_file != NULL) free(command->input_file);
     if (command->output_file != NULL) free(command->output_file);
 
