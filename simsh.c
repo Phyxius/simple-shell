@@ -3,7 +3,6 @@
 #include <signal.h>
 #include <errno.h>
 #include <wait.h>
-#include <sys/fcntl.h>
 #include <unistd.h>
 #include "libsimsh.h"
 
