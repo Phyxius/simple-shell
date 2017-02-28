@@ -1,11 +1,10 @@
-//
+#include <elf.h>//
 // Created by Shea on 2017-02-25.
 //
 
 #include <stdio.h>
 #include <string.h>
 #include "libsimsh.h"
-#include "aux_files/chop_line.h"
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdlib.h>
@@ -231,7 +230,7 @@ pid_t launch_process(char * const *args, bool wait, int in_fd, int out_fd)
 
 
 //from: http://www.microhowto.info/howto/reap_zombie_processes_using_a_sigchld_handler.html
-void handle_sigchld(int sig) {
+void handle_sigchld(int __unused sig) {
     int saved_errno = errno;
     while (waitpid((pid_t)(-1), 0, WNOHANG) > 0) {}
     errno = saved_errno;
