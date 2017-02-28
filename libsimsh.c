@@ -5,7 +5,6 @@
 #include <stdio.h>
 #include <string.h>
 #include "libsimsh.h"
-#include <unistd.h>
 #include <fcntl.h>
 #include <stdlib.h>
 #include <wait.h>
@@ -230,7 +229,7 @@ pid_t launch_process(char * const *args, bool wait, int in_fd, int out_fd)
 
 
 //from: http://www.microhowto.info/howto/reap_zombie_processes_using_a_sigchld_handler.html
-void handle_sigchld(int __unused sig) {
+void handle_sigchld(int sig __attribute__((unused))) {
     int saved_errno = errno;
     while (waitpid((pid_t)(-1), 0, WNOHANG) > 0) {}
     errno = saved_errno;

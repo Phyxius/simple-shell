@@ -5,6 +5,7 @@
 #ifndef LAB_2_LIBSIMSH_H
 #define LAB_2_LIBSIMSH_H
 #include <stdbool.h>
+#include <unistd.h>
 #include "aux_files/chop_line.h"
 #include "aux_files/list.h"
 
