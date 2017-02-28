@@ -37,7 +37,10 @@ int main()
         }
         else
         {
-            command_t command = parse_chopped_line(chopped_line);
+            //command_t command = parse_chopped_line(chopped_line);
+            command_t * commands;
+            parse_pipeline(chopped_line, &commands);
+            command_t command = commands[0];
             bool error = false;
             int in_fd = STDIN_FILENO;
             int out_fd = STDOUT_FILENO;

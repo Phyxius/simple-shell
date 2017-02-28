@@ -99,6 +99,7 @@ int parse_pipeline(chopped_line_t *line, command_t ** out)
     for (unsigned int j = 0; j < line->num_tokens; ++j)
     {
         if (!streq(line->tokens[j], "|") && j < (line->num_tokens - 1)) continue;
+        if (j >= (line->num_tokens - 1)) ++j;
         chopped_line_t temp_line = {
                 .num_tokens = j - pipeline_start,
                 .tokens = line->tokens + pipeline_start,
