@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "libsimsh.h"
+#include "aux_files/chop_line.h"
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdlib.h>
@@ -84,6 +85,30 @@ const char* get_validation_result(validation_t result)
         case NULL_COMMAND: return "Invalid null command.";
         default: return NULL;
     }
+}
+
+int parse_pipeline(chopped_line_t *line, command_t ** out)
+{
+    int pipeline_elements = 1;
+    for (int i = 0; i < line->num_tokens; ++i)
+    {
+        if (streq(line->tokens[i], "|")) ++pipeline_elements;
+    }
+    *out = malloc(pipeline_elements * sizeof(command_t));
+    unsigned int cur_pipeline_position = 0, pipeline_start = 0;
+    for (unsigned int j = 0; j < line->num_tokens; ++j)
+    {
+        if (!streq(line->tokens[j], "|") && j < (line->num_tokens - 1)) continue;
+        chopped_line_t temp_line = {
+                .num_tokens = j - pipeline_start,
+                .tokens = line->tokens + pipeline_start,
+                .line_copy = NULL
+        };
+        (*out)[cur_pipeline_position] = parse_chopped_line(&temp_line);
+        ++cur_pipeline_position;
+        pipeline_start = j + 1;
+    }
+    return pipeline_elements;
 }
 
 command_t parse_chopped_line(chopped_line_t *line)
