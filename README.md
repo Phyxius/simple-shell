@@ -14,5 +14,5 @@ To run it, build it (see Building), and then type `./simsh`. Then type commands 
 ### Prerequisites
 - Relatively new `gcc` (supports `-std=c11`)
 - Relatively new `cmake` (&geq; 3.6)
-### Building
+### Compiling
 Type `cmake .`
